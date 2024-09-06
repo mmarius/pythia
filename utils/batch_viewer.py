@@ -4,8 +4,7 @@ import numpy as np
 import argparse
 import os
 
-if __name__ == '__main__':
-    
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="",
     )
@@ -13,32 +12,33 @@ if __name__ == '__main__':
         "--start_iteration",
         type=int,
         default=0,
-        help="What train step to start logging"
+        help="What train step to start logging",
     )
     parser.add_argument(
         "--end_iteration",
         type=int,
         default=143000,
-        help="Train step to end logging (inclusive)"
+        help="Train step to end logging (inclusive)",
     )
     parser.add_argument(
         "load_path",
-        type = str,
-        default = '/mnt/ssd-1/pile_preshuffled/standard/document',
-        help = ("MMap dataset path with .bin and .idx files. Omit the .bin (or) .idx "
-                "Extension while specifying the path")
+        type=str,
+        default="/mnt/ssd-1/pile_preshuffled/standard/document",
+        help=(
+            "MMap dataset path with .bin and .idx files. Omit the .bin (or) .idx "
+            "Extension while specifying the path"
+        ),
     )
     parser.add_argument(
-        "--save_path",
-        type=str,
-        default="token_indicies",
-        help="Save path for files"
+        "--save_path", type=str, default="token_indices", help="Save path for files"
     )
     args = parser.parse_known_args()[0]
     os.makedirs(args.save_path, exist_ok=True)
-    filename = os.path.join(args.save_path, "indicies.npy")
+    print("Saving input_ids to:", args.save_path)
+    filename = os.path.join(
+        args.save_path, f"input_ids-from{args.start_iteration}-to{args.end_iteration}.npy"
+    )
 
-    dataset = MMapIndexedDataset(args.load_path, skip_warmup = True)
-    indicies = dataset[args.start_iteration*1024: args.end_iteration*1024 + 1]
-    np.save(filename, indicies)
-
+    dataset = MMapIndexedDataset(args.load_path, skip_warmup=True)
+    indices = dataset[args.start_iteration * 1024 : (args.end_iteration + 1) * 1024]
+    np.save(filename, indices)
